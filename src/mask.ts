@@ -1,7 +1,9 @@
 import { filters, modes } from './constants';
+import {MaskProps, MaskText} from "../types/components";
+import {MaskFilter} from "../types/constants";
 
 
-export default function mask(target, mask = '*', filter = filters.NUMBERS, mode = modes.AUTO, placeholder = null) {
+export default function mask(target: MaskText = '', mask = '*', filter: MaskFilter = filters.NUMBERS, mode = modes.AUTO, placeholder: string = '') {
 
     let result   = '';
 	let index    = 0;
@@ -9,8 +11,16 @@ export default function mask(target, mask = '*', filter = filters.NUMBERS, mode 
 
     try {
         target = target.toString();
+    } catch(e) {
+        target = '';
+        console.error(e);
+    }
+
+    try {
         placeholder = placeholder.toString();
-    } catch(e) {}
+    } catch (e) {
+        console.error(e);
+    }
 
     const reverse = (mode === 'auto') ? (/^[^?]*?\*.*$/.test((Array.isArray(mask) ? mask[0] : mask).replace(/\{\d+\|.+\}/i, '*')) || placeholder) : (mode === 'reverse');
 
@@ -21,37 +31,37 @@ export default function mask(target, mask = '*', filter = filters.NUMBERS, mode 
     }
 
     if(target === '' || !target) return '';
-    
+
 
     if(Array.isArray(mask)) {
-        mask.sort((a, b) => a.replace(/\{\d+\|.+\}/i, '*').replace(/[^?*]/gim,'').length - b.replace(/\{\d+\|.+\}/i, '*').replace(/[^?*]/gim,'').length);
-        
+        mask.sort((a, b) => a.replace(/{\d+\|.+}/i, '*').replace(/[^?*]/gim,'').length - b.replace(/{\d+\|.+}/i, '*').replace(/[^?*]/gim,'').length);
+
         for(let c = 0; c < mask.length; c++) {
-            if(mask[c].replace(/\{\d+\|.+\}/i, '*').replace(/[^?*]/gim,'').length >= target.length || c === (mask.length - 1)) {
+            if(mask[c].replace(/{\d+\|.+}/i, '*').replace(/[^?*]/gim,'').length >= target.length || c === (mask.length - 1)) {
                 mask = mask[c];
                 break;
             }
         }
     }
-    
-    if(/\{\d+\|.+\}/i.test(mask)) {
-        repeater = mask.match(/\{(\d+)\|(.+)\}/i);
-        mask     = mask.replace(/\{\d+\|.+\}/i, '*');
+
+    if(/{\d+\|.+}/i.test(mask)) {
+        repeater = mask.match(/{(\d+)\|(.+)}/i);
+        mask     = mask.replace(/{\d+\|.+}/i, '*');
     }
 
     if(reverse && /^[^*]*$/gim.test(mask) && target.length > mask.replace(/[^?]/gim,'').length) {
         target = target.substring(1);
     }
-	
+
 	loop: for (
         let c = reverse ? (mask.length-1) : 0;
         reverse ? c >= 0 : c < mask.length;
         reverse ? c--    : c++
     ) {
 	  switch(mask.charAt(c)) {
-		  
+
 		  case '?':
-        
+
 		  	if(target.charAt(index)) {
                 if(reverse) result =  target.charAt(index) + result;
 			    else        result += target.charAt(index);
@@ -60,11 +70,11 @@ export default function mask(target, mask = '*', filter = filters.NUMBERS, mode 
                 if(reverse) result  = placeholder + result;
                 else        result += placeholder;
             } else break loop;
-            
+
 			break;
-		  
+
 		  case '*':
-		  	
+
             const remaining = repeater
                 ? (target.substring(index).match(new RegExp('.{1,' + repeater[1] + '}', 'g')) || []).join(repeater[2])
                 : target.substring(index);
@@ -78,29 +88,29 @@ export default function mask(target, mask = '*', filter = filters.NUMBERS, mode 
                 const finisher  = mask.substring(c+1).replace(/[?*]/gim,'');
 			    return result + ((remaining) ? remaining : (placeholder || '')) + finisher;
             }
-			
+
 		  default:
 
             if(reverse) result = mask.charAt(c) + result;
             else        result += mask.charAt(c);
 
             break;
-		  
+
 	  }
 	}
-	
+
 	const last = reverse ? result.charAt(0) : result.charAt(result.length-1);
     if(reverse && last !== target.charAt(index-1) && last !== mask.charAt(0) && last !== placeholder) {
         result = result.substring(1);
     } else if(!reverse && last !== target.charAt(index-1) && last !== mask.charAt(mask.length-1) && last !== placeholder) {
         result = result.slice(0,-1);
     }
-	
+
 	return result;
 
 }
 
-export function applyMask(target, config) {
+export function applyMask(target: MaskText, config: MaskProps) {
 
     return mask(target, config.mask, config.filter, config.mode, config.placeholder);
 
