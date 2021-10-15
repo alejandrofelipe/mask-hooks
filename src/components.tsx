@@ -13,8 +13,6 @@ export const MaskInput = (props: MaskInputProps) => {
     } || {});
 
     return (<input {...props} value={mask(props.value)}/>);
-    // return React.createElement('input', { ...props, value: mask(props.value || '') });
-
 }
 
 export const MaskOutput = (props: MaskOutputProps) => {
@@ -27,5 +25,4 @@ export const MaskOutput = (props: MaskOutputProps) => {
     } || {});
 
     return (<>{mask(props.children || '')}</>);
-    // return React.createElement(React.Fragment, null, mask(props.children || ''));
 }
