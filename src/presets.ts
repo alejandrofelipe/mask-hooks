@@ -1,4 +1,4 @@
-import { modes } from './constants';
+import {modes} from './constants';
 
 const presets = {
 
@@ -24,8 +24,8 @@ const presets = {
     },
 
     PHONE_USA: {
-        mask:   '(???) ???-????',
-        mode:    modes.NORMAL,
+        mask: '(???) ???-????',
+        mode: modes.NORMAL,
     },
 
     PHONE_BR: {
@@ -34,20 +34,20 @@ const presets = {
     },
 
     CURRENCY_POINT: {
-        mask:        '{3|,}.??',
-        mode:        modes.REVERSE,
+        mask: '{3|,}.??',
+        mode: modes.REVERSE,
         placeholder: '0'
     },
 
     CURRENCY_COMMA: {
-        mask:        '{3|.},??',
-        mode:        modes.REVERSE,
+        mask: '{3|.},??',
+        mode: modes.REVERSE,
         placeholder: '0'
     },
 
     CURRENCY_PTBR: {
-        mask:        'R$ {3|.},??',
-        mode:        modes.REVERSE,
+        mask: 'R$ {3|.},??',
+        mode: modes.REVERSE,
         placeholder: '0'
     },
 

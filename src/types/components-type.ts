@@ -1,4 +1,4 @@
-import {MaskFilter, MaskModes} from "./constants";
+import {MaskFilter, MaskModes} from "./constants-type";
 import {DetailedHTMLProps, InputHTMLAttributes} from "react";
 
 export type MaskText = string | ReadonlyArray<string> | number | undefined;
